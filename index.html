@@ -726,42 +726,29 @@ function showResults() {
   gopay: document.getElementById('gopay').value
 };
 
-fetch("https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    initials: participantData.initials,
-    age: participantData.age,
-    gender: participantData.gender,
-    religion: participantData.religion,
-    gopay: participantData.gopay,
-    totalScore: totalScore,
-    totalPct: totalPct,
-    spirituality: scores.sp,
-    socialRelation: scores.sr,
-    basicNeeds: scores.bn,
-    selfAcceptance: scores.ac
-  })
-})
-.catch(error => console.error(error));
+fetch(
+  "https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec",
+  {
+    method: "POST",
+    body: JSON.stringify({
+      initials: participantData.initials,
+      age: participantData.age,
+      gender: participantData.gender,
+      religion: participantData.religion,
+      gopay: participantData.gopay,
+      totalScore: totalScore,
+      totalPct: totalPct,
+      spirituality: scores.sp,
+      socialRelation: scores.sr,
+      basicNeeds: scores.bn,
+      selfAcceptance: scores.ac
+    })
+  }
+)
+.then(res => res.text())
+.then(data => console.log("Saved:", data))
+.catch(err => console.error("Error:", err));
 
-  fetch("https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    totalScore: totalScore,
-    totalPct: totalPct,
-    spirituality: scores.sp,
-    socialRelation: scores.sr,
-    basicNeeds: scores.bn,
-    selfAcceptance: scores.ac
-  })
-})
-.catch(err => console.error(err));
   document.getElementById('survey').style.display = 'none';
   document.getElementById('results').style.display = 'block';
 
