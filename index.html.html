@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indonesian Well-being Scale</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #F7F4EF;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --muted: #6B7280;
+    --border: #E5E0D8;
+    --bn-hue: #3B82F6;
+    --sr-hue: #10B981;
+    --ac-hue: #F59E0B;
+    --sp-hue: #8B5CF6;
+    --bn-bg: #EFF6FF;
+    --sr-bg: #ECFDF5;
+    --ac-bg: #FFFBEB;
+    --sp-bg: #F5F3FF;
+    --radius: 16px;
+    --shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .header {
+    background: var(--text);
+    color: #fff;
+    padding: 32px 24px 28px;
+    text-align: center;
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 10px;
+  }
+  .header h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .header p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    height: 5px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sp-hue), var(--sr-hue), var(--bn-hue), var(--ac-hue));
+    transition: width 0.4s ease;
+  }
+
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 16px 64px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 36px 0 18px;
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    border-left: 4px solid transparent;
+  }
+  .section-header.sp { background: var(--sp-bg); border-color: var(--sp-hue); }
+  .section-header.sr { background: var(--sr-bg); border-color: var(--sr-hue); }
+  .section-header.bn { background: var(--bn-bg); border-color: var(--bn-hue); }
+  .section-header.ac { background: var(--ac-bg); border-color: var(--ac-hue); }
+
+  .section-icon { font-size: 28px; flex-shrink: 0; }
+  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 2px; }
+  .section-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .question-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 22px 18px;
+    margin-bottom: 14px;
+    border: 1.5px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .question-card.answered { border-color: #C7EFCF; }
+
+  .q-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .q-text {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+
+  .likert { display: flex; gap: 6px; flex-wrap: wrap; }
+  .likert label { flex: 1; min-width: 52px; cursor: pointer; }
+  .likert input { display: none; }
+  .likert-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 6px 8px;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .likert-score { font-size: 15px; font-weight: 700; color: var(--muted); line-height: 1; }
+  .likert-desc {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 4px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .likert label:hover .likert-btn { border-color: #aaa; }
+
+  .dim-sp .likert input:checked + .likert-btn { border-color: var(--sp-hue); background: var(--sp-bg); }
+  .dim-sp .likert input:checked + .likert-btn .likert-score { color: var(--sp-hue); }
+  .dim-sr .likert input:checked + .likert-btn { border-color: var(--sr-hue); background: var(--sr-bg); }
+  .dim-sr .likert input:checked + .likert-btn .likert-score { color: var(--sr-hue); }
+  .dim-bn .likert input:checked + .likert-btn { border-color: var(--bn-hue); background: var(--bn-bg); }
+  .dim-bn .likert input:checked + .likert-btn .likert-score { color: var(--bn-hue); }
+  .dim-ac .likert input:checked + .likert-btn { border-color: var(--ac-hue); background: var(--ac-bg); }
+  .dim-ac .likert input:checked + .likert-btn .likert-score { color: var(--ac-hue); }
+
+  .submit-wrap { margin-top: 36px; text-align: center; }
+  .btn-submit {
+    background: var(--text);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 48px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-submit:hover { opacity: 0.85; }
+  .btn-submit:active { transform: scale(0.97); }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+  .submit-note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+
+  #results { display: none; }
+
+  .results-header {
+    background: var(--text);
+    color: #fff;
+    padding: 36px 24px;
+    text-align: center;
+  }
+  .results-header h2 {
+    font-family: 'Lora', serif;
+    font-size: clamp(20px, 5vw, 30px);
+    margin-bottom: 8px;
+  }
+  .results-header p { color: rgba(255,255,255,0.6); font-size: 14px; }
+
+  .results-main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 16px 64px;
+  }
+
+  .overall-score-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px 24px;
+    margin-bottom: 28px;
+    text-align: center;
+    border: 1.5px solid var(--border);
+  }
+  .overall-label {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .overall-number {
+    font-family: 'Lora', serif;
+    font-size: 56px;
+    font-weight: 600;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--sp-hue), var(--bn-hue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .overall-max { font-size: 18px; color: var(--muted); }
+  .overall-category { font-size: 18px; font-weight: 700; margin-top: 10px; color: var(--text); }
+  .overall-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.6;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .chart-wrap {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 28px;
+    border: 1.5px solid var(--border);
+  }
+  .chart-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .dim-bar-row { margin-bottom: 18px; }
+  .dim-bar-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+  .dim-bar-name {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dim-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dim-bar-score { font-size: 13px; font-weight: 700; color: var(--muted); }
+  .dim-bar-track { background: var(--border); border-radius: 99px; height: 10px; overflow: hidden; }
+  .dim-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dim-bar-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .dim-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 22px 20px;
+    margin-bottom: 16px;
+    border: 1.5px solid var(--border);
+  }
+  .dim-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .dim-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dim-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+  .dim-card-desc { font-size: 13.5px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+  .dim-resources { border-top: 1px solid var(--border); padding-top: 14px; }
+  .dim-resources-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .resource-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: inherit;
+    text-decoration: none;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    transition: opacity 0.2s;
+  }
+  .resource-link:last-child { border-bottom: none; }
+  .resource-link:hover { opacity: 0.7; }
+  .resource-icon { font-size: 16px; flex-shrink: 0; }
+  .resource-text { flex: 1; }
+  .resource-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .btn-restart {
+    display: block;
+    margin: 32px auto 0;
+    background: transparent;
+    border: 1.5px solid var(--text);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 14px 40px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-restart:hover { background: var(--text); color: #fff; }
+
+  .disclaimer {
+    background: #FEF3C7;
+    border: 1px solid #FCD34D;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: #78350F;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .section-label-bar {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 8px 0 16px;
+  }
+
+  @media (max-width: 480px) {
+    .likert-desc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="survey">
+  <div class="header">
+    <div class="header-eyebrow">Maulana, Khawaja & Obst · 2019</div>
+    <h1>Indonesian Well-being Scale</h1>
+    <p>Jawablah setiap pernyataan dengan jujur sesuai perasaanmu saat ini. Tidak ada jawaban benar atau salah.</p>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="main" id="surveyMain"></div>
+</div>
+
+<div id="results">
+  <div class="results-header">
+    <h2>Hasil Kesejahteraanmu</h2>
+    <p>Berdasarkan Indonesian Well-being Scale (IWS)</p>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" style="width:100%"></div>
+  </div>
+  <div class="results-main" id="resultsMain"></div>
+</div>
+
+<script>
+// ── EXACT questions from the uploaded document ──
+// Order matches the original numbering 1–20
+// Dimension mapping (based on IWS Maulana 2019):
+//   Spirituality  : 1–5
+//   Social Rel.   : 6–11
+//   Basic Needs   : 12–15
+//   Acceptance    : 16–20
+
+const DIMENSIONS = [
+  {
+    id: 'sp',
+    name: 'Spiritualitas',
+    icon: '✨',
+    color: '#8B5CF6',
+    bg: '#F5F3FF',
+    maxScore: 25,
+    items: [1,2,3,4,5],
+    subtitle: 'Peran keyakinan dan praktik spiritual dalam kehidupanmu.',
+    questions: [
+      'Beribadah/berdoa kepada Tuhan membantu saya untuk selalu berpikir positif.',
+      'Tuhan membantu saya dalam menghadapi masalah.',
+      'Tuhan memberikan yang terbaik untuk saya.',
+      'Berdoa/beribadah membantu saya untuk tetap tenang.',
+      'Tuhan selalu ada bersama saya dalam waktu-waktu sulit.'
+    ],
+    desc_high: 'Spiritualitas adalah sumber kekuatan yang sangat kuat bagimu. Kamu menemukan ketenangan, makna, dan harapan melalui keyakinan dan praktik ibadahmu sehari-hari.',
+    desc_mid:  'Spiritualitas berperan dalam kehidupanmu, namun ada ruang untuk memperdalam koneksi spiritualmu sehingga bisa menjadi sandaran yang lebih kuat di saat sulit.',
+    desc_low:  'Dimensi spiritual mungkin belum menjadi sumber kekuatan utamamu saat ini. Ini perjalanan yang sangat personal — tidak ada yang salah dengan posisimu sekarang.',
+    resources: [
+      { label: 'Spiritualitas & Kesehatan Mental: Apa Hubungannya?', url: 'https://hellosehat.com/mental/kesehatan-mental/spiritualitas-dan-kesehatan-mental/', tag: 'Artikel', icon: '📖' },
+      { label: 'Mindfulness & Ibadah: Hadir Penuh dalam Keseharian', url: 'https://hellosehat.com/mental/kesehatan-mental/mindfulness-untuk-kesehatan-mental/', tag: 'Praktik', icon: '🧘' },
+      { label: 'Yayasan Pulih – Dukungan Kesehatan Mental', url: 'https://yayasanpulih.org', tag: 'Dukungan', icon: '🌸' },
+    ]
+  },
+  {
+    id: 'sr',
+    name: 'Hubungan Sosial',
+    icon: '🤝',
+    color: '#10B981',
+    bg: '#ECFDF5',
+    maxScore: 30,
+    items: [6,7,8,9,10,11],
+    subtitle: 'Kualitas hubunganmu dengan keluarga, komunitas, dan lingkungan sekitar.',
+    questions: [
+      'Saya banyak menghabiskan waktu bersama dengan keluarga (contoh: orang tua, pasangan, anak, dan saudara).',
+      'Keluarga memberikan dukungan bagi saya (contoh: motivasi, semangat).',
+      'Saya memberikan dukungan (contoh: motivasi, semangat) untuk keluarga (contoh: orang tua, pasangan, anak, dan saudara).',
+      'Orang tua/keluarga berusaha untuk selalu ada/hadir untuk saya.',
+      'Saya berusaha untuk selalu ada/hadir untuk orang tua/keluarga.',
+      'Saya mengenal dengan baik orang-orang (tetangga) di sekitar tempat tinggal saya.'
+    ],
+    desc_high: 'Hubungan sosialmu sangat kuat. Kamu merasakan dukungan yang hangat dari keluarga, saling hadir satu sama lain, dan terhubung dengan baik dengan lingkungan sekitarmu.',
+    desc_mid:  'Hubungan sosialmu cukup baik, namun beberapa aspek — seperti kedekatan dengan tetangga atau kehadiran bagi keluarga — masih bisa diperkuat.',
+    desc_low:  'Kamu mungkin merasa kurang terhubung atau kurang mendapat dukungan dari lingkungan sosialmu. Memperkuat satu hubungan yang bermakna bisa menjadi langkah awal yang baik.',
+    resources: [
+      { label: 'Cara Membangun Hubungan Keluarga yang Sehat', url: 'https://hellosehat.com/parenting/tips-parenting/cara-membangun-keluarga-yang-harmonis/', tag: 'Keluarga', icon: '🏡' },
+      { label: 'Mengatasi Kesepian & Membangun Koneksi Sosial', url: 'https://www.halodoc.com/artikel/pentingnya-dukungan-sosial-bagi-kesehatan-mental', tag: 'Sosial', icon: '💙' },
+      { label: 'Into The Light Indonesia – Dukungan Kesehatan Mental', url: 'https://www.intothelightid.org', tag: 'Dukungan', icon: '🌟' },
+    ]
+  },
+  {
+    id: 'bn',
+    name: 'Kebutuhan Dasar',
+    icon: '🏠',
+    color: '#3B82F6',
+    bg: '#EFF6FF',
+    maxScore: 20,
+    items: [12,13,14,15],
+    subtitle: 'Sejauh mana kebutuhan finansial dan material hidupmu terpenuhi.',
+    questions: [
+      'Saya mampu untuk memenuhi biaya transportasi sehari-hari (contoh: membayar bis, bensin).',
+      'Saya mampu untuk memenuhi kebutuhan pendidikan untuk diri/keluarga (contoh: biaya kuliah, buku, seragam, atau ekstrakurikuler).',
+      'Saya memiliki simpanan uang untuk kebutuhan mendesak/tidak terduga/darurat.',
+      'Saya mampu memenuhi kebutuhan sekunder (contoh: liburan/rekreasi).'
+    ],
+    desc_high: 'Kebutuhan dasarmu terpenuhi dengan baik. Kamu memiliki kestabilan finansial yang memberikan rasa aman — mulai dari kebutuhan harian hingga tabungan darurat.',
+    desc_mid:  'Kebutuhan pokokmu cukup terpenuhi, namun ada beberapa area finansial — seperti tabungan darurat atau kebutuhan sekunder — yang masih perlu diperhatikan.',
+    desc_low:  'Kamu mungkin sedang mengalami tekanan finansial yang cukup berarti. Ini bisa berdampak pada aspek kesejahteraan lainnya, dan penting untuk dicari solusinya secara bertahap.',
+    resources: [
+      { label: 'OJK: Literasi & Edukasi Keuangan', url: 'https://sikapiuangmu.ojk.go.id', tag: 'Finansial', icon: '💰' },
+      { label: 'Tips Mengelola Keuangan Pribadi – Cermati', url: 'https://www.cermati.com/artikel/cara-mengatur-keuangan', tag: 'Edukasi', icon: '📚' },
+      { label: 'Stres Finansial dan Kesehatan Mental', url: 'https://www.intothelightid.org', tag: 'Kesehatan Mental', icon: '🧠' },
+    ]
+  },
+  {
+    id: 'ac',
+    name: 'Penerimaan Diri',
+    icon: '🌱',
+    color: '#F59E0B',
+    bg: '#FFFBEB',
+    maxScore: 25,
+    items: [16,17,18,19,20],
+    subtitle: 'Kemampuanmu menerima diri sendiri, mensyukuri hidup, dan berdamai dengan kondisimu.',
+    questions: [
+      'Secara umum, saya puas dengan kehidupan saat ini.',
+      'Saya menghindari untuk membandingkan hidup saya dengan orang lain.',
+      'Hidup tidak menjadi beban bagi saya.',
+      'Saya bahagia dengan hidup saya.',
+      'Saya tidak khawatir bila tidak mendapatkan apa yang saya inginkan.'
+    ],
+    desc_high: 'Kamu memiliki penerimaan diri yang kuat. Kamu merasa puas, tidak mudah terbebani perbandingan sosial, dan mampu berdamai dengan kondisi hidupmu saat ini.',
+    desc_mid:  'Penerimaan dirimu cukup baik, namun mungkin ada momen tertentu di mana kamu merasa terbebani atau sulit untuk tidak membandingkan hidupmu dengan orang lain.',
+    desc_low:  'Kamu mungkin sedang berjuang untuk menerima kondisi hidupmu atau merasa hidup terasa berat. Ini adalah perasaan yang valid, dan ada banyak cara untuk mendapat dukungan.',
+    resources: [
+      { label: 'Self-Compassion: Berdamai dengan Diri Sendiri', url: 'https://self-compassion.org', tag: 'Psikologi', icon: '💛' },
+      { label: 'Mengatasi Pikiran Negatif & Social Comparison', url: 'https://hellosehat.com/mental/kesehatan-mental/cara-berhenti-membandingkan-diri/', tag: 'Artikel', icon: '🔍' },
+      { label: 'Latihan Mindfulness & Rasa Syukur Harian', url: 'https://hellosehat.com/mental/kesehatan-mental/mindfulness-untuk-kesehatan-mental/', tag: 'Praktik', icon: '🧘' },
+    ]
+  }
+];
+
+const TOTAL_MAX = 100;
+
+function getCategory(pct) {
+  if (pct >= 80) return { label: 'Kesejahteraan Tinggi', emoji: '🌟', desc: 'Kamu menunjukkan tingkat kesejahteraan yang sangat baik di sebagian besar dimensi kehidupanmu. Pertahankan dan terus kembangkan!' };
+  if (pct >= 60) return { label: 'Kesejahteraan Cukup Baik', emoji: '😊', desc: 'Kesejahteraanmu berada di level yang baik. Ada beberapa dimensi yang bisa diperkuat untuk meningkatkan kualitas hidupmu secara keseluruhan.' };
+  if (pct >= 40) return { label: 'Kesejahteraan Sedang', emoji: '🌱', desc: 'Beberapa dimensi penting memerlukan perhatian lebih. Tidak apa-apa — mengenali area ini adalah langkah pertama yang penting.' };
+  return { label: 'Perlu Perhatian Lebih', emoji: '💙', desc: 'Beberapa dimensi penting perlu mendapat perhatian serius. Pertimbangkan untuk berbicara dengan psikolog atau konselor yang dapat membantumu.' };
+}
+
+function getDimCategory(pct) {
+  if (pct >= 80) return { label: 'Tinggi', color: '#10B981' };
+  if (pct >= 60) return { label: 'Cukup Baik', color: '#3B82F6' };
+  if (pct >= 40) return { label: 'Sedang', color: '#F97316' };
+  return { label: 'Rendah', color: '#EF4444' };
+}
+
+function buildSurvey() {
+  const container = document.getElementById('surveyMain');
+  let html = '';
+
+  DIMENSIONS.forEach(dim => {
+    html += `
+      <div class="section-header ${dim.id}">
+        <span class="section-icon">${dim.icon}</span>
+        <div>
+          <div class="section-title">${dim.name}</div>
+          <div class="section-desc">${dim.subtitle}</div>
+        </div>
+      </div>
+    `;
+    dim.questions.forEach((q, qi) => {
+      const qNum = dim.items[qi];
+      html += `
+        <div class="question-card dim-${dim.id}" id="qcard-${qNum}">
+          <div class="q-label">Pernyataan ${qNum} dari 20</div>
+          <div class="q-text">${q}</div>
+          <div class="likert">
+            ${[1,2,3,4,5].map(v => `
+              <label>
+                <input type="radio" name="q${qNum}" value="${v}" onchange="onAnswer(${qNum})">
+                <div class="likert-btn">
+                  <span class="likert-score">${v}</span>
+                  <span class="likert-desc">${['STS','TS','N','S','SS'][v-1]}</span>
+                </div>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+  });
+
+  html += `
+    <div class="submit-wrap">
+      <button class="btn-submit" id="btnSubmit" onclick="showResults()" disabled>
+        Lihat Hasil Saya →
+      </button>
+      <div class="submit-note" id="submitNote">Jawab semua 20 pernyataan untuk melihat hasil.</div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+let answered = new Set();
+
+function onAnswer(qNum) {
+  answered.add(qNum);
+  document.getElementById(`qcard-${qNum}`).classList.add('answered');
+  const pct = (answered.size / 20) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  const btn = document.getElementById('btnSubmit');
+  const note = document.getElementById('submitNote');
+  if (answered.size === 20) {
+    btn.disabled = false;
+    note.textContent = 'Semua pernyataan telah dijawab. Siap melihat hasilmu!';
+  } else {
+    btn.disabled = true;
+    note.textContent = `${answered.size} / 20 pernyataan terjawab.`;
+  }
+}
+
+function getScores() {
+  const scores = {};
+  DIMENSIONS.forEach(dim => {
+    let total = 0;
+    dim.items.forEach(n => {
+      const val = parseInt(document.querySelector(`input[name="q${n}"]:checked`)?.value || 0);
+      total += val;
+    });
+    scores[dim.id] = total;
+  });
+  return scores;
+}
+
+function showResults() {
+  const scores = getScores();
+  const totalScore = Object.values(scores).reduce((a,b) => a+b, 0);
+  const totalPct = Math.round((totalScore / TOTAL_MAX) * 100);
+  const cat = getCategory(totalPct);
+
+  document.getElementById('survey').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+
+  const main = document.getElementById('resultsMain');
+
+  let html = `
+    <div class="disclaimer">
+      ⚠️ <strong>Catatan Penting:</strong> Hasil ini bersifat informatif dan bukan diagnosis klinis. Jika kamu merasa membutuhkan dukungan lebih lanjut, silakan konsultasi dengan psikolog atau tenaga kesehatan mental profesional.
+    </div>
+
+    <div class="overall-score-card">
+      <div class="overall-label">Skor Kesejahteraan Total</div>
+      <div>
+        <span class="overall-number">${totalScore}</span>
+        <span class="overall-max"> / ${TOTAL_MAX}</span>
+      </div>
+      <div style="color: var(--muted); font-size: 14px; margin-top: 4px;">${totalPct}% dari skor maksimal</div>
+      <div class="overall-category">${cat.emoji} ${cat.label}</div>
+      <div class="overall-desc">${cat.desc}</div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">Profil per Dimensi</div>
+  `;
+
+  DIMENSIONS.forEach(dim => {
+    const s = scores[dim.id];
+    const pct = Math.round((s / dim.maxScore) * 100);
+    const dc = getDimCategory(pct);
+    html += `
+      <div class="dim-bar-row">
+        <div class="dim-bar-meta">
+          <div class="dim-bar-name">
+            <span class="dim-dot" style="background:${dim.color}"></span>
+            ${dim.icon} ${dim.name}
+          </div>
+          <div class="dim-bar-score" style="color:${dim.color}">${s} / ${dim.maxScore}</div>
+        </div>
+        <div class="dim-bar-track">
+          <div class="dim-bar-fill" id="bar-${dim.id}" style="width:0%; background:${dim.color}" data-target="${pct}"></div>
+        </div>
+        <div class="dim-bar-label">${pct}% — ${dc.label}</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+
+  const sortedDims = [...DIMENSIONS].sort((a,b) => {
+    return (scores[a.id]/a.maxScore) - (scores[b.id]/b.maxScore);
+  });
+
+  html += `<div class="section-label-bar">Detail & Rekomendasi <span style="font-weight:400;color:var(--muted)">(dimulai dari dimensi yang paling perlu perhatian)</span></div>`;
+
+  sortedDims.forEach(dim => {
+    const s = scores[dim.id];
+    const pct = Math.round((s / dim.maxScore) * 100);
+    const dc = getDimCategory(pct);
+    const desc = pct >= 70 ? dim.desc_high : pct >= 45 ? dim.desc_mid : dim.desc_low;
+
+    html += `
+      <div class="dim-card">
+        <div class="dim-card-header">
+          <div class="dim-card-title">
+            <span style="width:12px;height:12px;border-radius:50%;background:${dim.color};display:inline-block;flex-shrink:0"></span>
+            ${dim.icon} ${dim.name}
+          </div>
+          <span class="dim-badge" style="background:${dim.bg}; color:${dim.color};">${dc.label} · ${pct}%</span>
+        </div>
+        <div class="dim-card-desc">${desc}</div>
+        <div class="dim-resources">
+          <div class="dim-resources-label">📎 Psikoedukasi & Sumber Daya</div>
+          ${dim.resources.map(r => `
+            <a class="resource-link" href="${r.url}" target="_blank" rel="noopener">
+              <span class="resource-icon">${r.icon}</span>
+              <span class="resource-text">${r.label}</span>
+              <span class="resource-tag" style="background:${dim.bg}; color:${dim.color};">${r.tag}</span>
+            </a>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+    <button class="btn-restart" onclick="restartSurvey()">↩ Isi Ulang Survei</button>
+    <div style="text-align:center; font-size:11px; color:var(--muted); margin-top:20px; line-height:1.6;">
+      Referensi: Maulana, H., Khawaja, N., & Obst, P. (2019). Development and validation of the Indonesian Well-being Scale. <em>Asian Journal of Social Psychology, 22</em>(4), 405–414.
+    </div>
+  `;
+
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  setTimeout(() => {
+    document.querySelectorAll('.dim-bar-fill').forEach(el => {
+      el.style.width = el.dataset.target + '%';
+    });
+  }, 150);
+}
+
+function restartSurvey() {
+  answered.clear();
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('survey').style.display = 'block';
+  buildSurvey();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildSurvey();
+</script>
+</body>
+</html>
