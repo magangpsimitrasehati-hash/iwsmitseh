@@ -425,6 +425,7 @@
     <div class="header-eyebrow">Maulana, Khawaja & Obst · 2019</div>
     <h1>Indonesian Well-being Scale</h1>
     <p>Jawablah setiap pernyataan dengan jujur sesuai perasaanmu saat ini. Tidak ada jawaban benar atau salah.</p>
+    <p>Pilih berdasarkan seberapa sesuai pernyataan tersebut dengan keadaanmu, dari 1 "Sangat Tidak Setuju" (STS) hingga 5 "Sangat Setuju" (SS).</p>
   </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
@@ -620,7 +621,20 @@ function buildSurvey() {
       </div>
     </div>
   `;
-
+  
+html += `
+    <div class="personal-data-card">
+      <div class="personal-data-title">Panduan Skala Jawaban</div>
+      <div style="font-size:14px; line-height:1.8;">
+        <strong>STS</strong> = Sangat Tidak Setuju<br>
+        <strong>TS</strong> = Tidak Setuju<br>
+        <strong>N</strong> = Netral<br>
+        <strong>S</strong> = Setuju<br>
+        <strong>SS</strong> = Sangat Setuju
+      </div>
+    </div>
+    
+  `;
   DIMENSIONS.forEach(dim => {
     html += `
       <div class="section-header ${dim.id}">
@@ -640,12 +654,19 @@ function buildSurvey() {
           <div class="likert">
             ${[1,2,3,4,5].map(v => `
               <label>
-                <input type="radio" name="q${qNum}" value="${v}" onchange="onAnswer(${qNum})">
-                <div class="likert-btn">
-                  <span class="likert-score">${v}</span>
-                  <span class="likert-desc">${['STS','TS','N','S','SS'][v-1]}</span>
-                </div>
-              </label>
+                <label title="${[
+  'Sangat Tidak Setuju',
+  'Tidak Setuju',
+  'Netral',
+  'Setuju',
+  'Sangat Setuju'
+][v-1]}">
+  <input type="radio" name="q${qNum}" value="${v}" onchange="onAnswer(${qNum})">
+  <div class="likert-btn">
+    <span class="likert-score">${v}</span>
+    <span class="likert-desc">${['STS','TS','N','S','SS'][v-1]}</span>
+  </div>
+</label>
             `).join('')}
           </div>
         </div>
