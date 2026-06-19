@@ -726,28 +726,28 @@ function showResults() {
   gopay: document.getElementById('gopay').value
 };
 
+const params = new URLSearchParams({
+  initials: participantData.initials,
+  age: participantData.age,
+  gender: participantData.gender,
+  religion: participantData.religion,
+  gopay: participantData.gopay,
+  totalScore: totalScore,
+  totalPct: totalPct,
+  spirituality: scores.sp,
+  socialRelation: scores.sr,
+  basicNeeds: scores.bn,
+  selfAcceptance: scores.ac
+});
+
 fetch(
-  "https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec",
+  "https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec?" +
+  params.toString(),
   {
-    method: "POST",
-    body: JSON.stringify({
-      initials: participantData.initials,
-      age: participantData.age,
-      gender: participantData.gender,
-      religion: participantData.religion,
-      gopay: participantData.gopay,
-      totalScore: totalScore,
-      totalPct: totalPct,
-      spirituality: scores.sp,
-      socialRelation: scores.sr,
-      basicNeeds: scores.bn,
-      selfAcceptance: scores.ac
-    })
+    method: "GET",
+    mode: "no-cors"
   }
-)
-.then(res => res.text())
-.then(data => console.log("Saved:", data))
-.catch(err => console.error("Error:", err));
+);
 
   document.getElementById('survey').style.display = 'none';
   document.getElementById('results').style.display = 'block';
