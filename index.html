@@ -372,6 +372,46 @@
     color: var(--muted);
     margin: 8px 0 16px;
   }
+  .personal-data-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 28px;
+  border: 1.5px solid var(--border);
+}
+
+.personal-data-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.personal-data-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+}
 
   @media (max-width: 480px) {
     .likert-desc { display: none; }
@@ -533,7 +573,53 @@ function getDimCategory(pct) {
 
 function buildSurvey() {
   const container = document.getElementById('surveyMain');
-  let html = '';
+
+  let html = `
+    <div class="personal-data-card">
+      <div class="personal-data-title">Data Diri Peserta</div>
+      <div class="personal-data-desc">
+        Data digunakan untuk keperluan penelitian dan pemberian insentif.
+      </div>
+
+      <div class="form-group">
+        <label>Inisial Nama</label>
+        <input type="text" id="initials" placeholder="Contoh: DR">
+      </div>
+
+      <div class="form-group">
+        <label>Umur</label>
+        <input type="number" id="age">
+      </div>
+
+      <div class="form-group">
+        <label>Jenis Kelamin</label>
+        <select id="gender">
+          <option value="">Pilih</option>
+          <option>Laki-laki</option>
+          <option>Perempuan</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Agama</label>
+        <select id="religion">
+          <option value="">Pilih</option>
+          <option>Islam</option>
+          <option>Kristen Protestan</option>
+          <option>Katolik</option>
+          <option>Hindu</option>
+          <option>Buddha</option>
+          <option>Konghucu</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Nomor GoPay</label>
+        <input type="tel" id="gopay" placeholder="08xxxxxxxxxx">
+      </div>
+    </div>
+  `;
 
   DIMENSIONS.forEach(dim => {
     html += `
@@ -596,7 +682,21 @@ function onAnswer(qNum) {
     note.textContent = `${answered.size} / 20 pernyataan terjawab.`;
   }
 }
+function validatePersonalData() {
 
+  const initials = document.getElementById('initials').value.trim();
+  const age = document.getElementById('age').value;
+  const gender = document.getElementById('gender').value;
+  const religion = document.getElementById('religion').value;
+  const gopay = document.getElementById('gopay').value.trim();
+
+  if (!initials || !age || !gender || !religion || !gopay) {
+    alert('Mohon lengkapi seluruh data diri terlebih dahulu.');
+    return false;
+  }
+
+  return true;
+}
 function getScores() {
   const scores = {};
   DIMENSIONS.forEach(dim => {
@@ -609,13 +709,59 @@ function getScores() {
   });
   return scores;
 }
-
 function showResults() {
+
+  if (!validatePersonalData()) {
+    return;
+  }
   const scores = getScores();
   const totalScore = Object.values(scores).reduce((a,b) => a+b, 0);
   const totalPct = Math.round((totalScore / TOTAL_MAX) * 100);
   const cat = getCategory(totalPct);
+  const participantData = {
+  initials: document.getElementById('initials').value,
+  age: document.getElementById('age').value,
+  gender: document.getElementById('gender').value,
+  religion: document.getElementById('religion').value,
+  gopay: document.getElementById('gopay').value
+};
 
+fetch("https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    initials: participantData.initials,
+    age: participantData.age,
+    gender: participantData.gender,
+    religion: participantData.religion,
+    gopay: participantData.gopay,
+    totalScore: totalScore,
+    totalPct: totalPct,
+    spirituality: scores.sp,
+    socialRelation: scores.sr,
+    basicNeeds: scores.bn,
+    selfAcceptance: scores.ac
+  })
+})
+.catch(error => console.error(error));
+
+  fetch("https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    totalScore: totalScore,
+    totalPct: totalPct,
+    spirituality: scores.sp,
+    socialRelation: scores.sr,
+    basicNeeds: scores.bn,
+    selfAcceptance: scores.ac
+  })
+})
+.catch(err => console.error(err));
   document.getElementById('survey').style.display = 'none';
   document.getElementById('results').style.display = 'block';
 
