@@ -5,6 +5,77 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indonesian Well-being Scale</title>
 <style>
+  .intro-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  margin-bottom: 28px;
+  border: 1.5px solid var(--border);
+}
+
+.intro-title {
+  font-family: 'Lora', serif;
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.intro-subtitle {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.intro-section {
+  margin-bottom: 20px;
+}
+
+.intro-section h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.intro-section p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.consent-box {
+  background: #EFF6FF;
+  border: 1px solid #93C5FD;
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 24px;
+}
+
+.consent-box label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.consent-box input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+}
+  
+.reward-box {
+  background: #ECFDF5;
+  border: 1px solid #10B981;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.reward-box strong {
+  color: #047857;
+}
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
 
   :root {
@@ -575,7 +646,73 @@ function buildSurvey() {
   const container = document.getElementById('surveyMain');
 
   let html = `
-    <div class="personal-data-card">
+<div class="intro-card">
+
+  <div class="intro-title">
+    Indonesian Well-being Scale (IWS)
+  </div>
+
+  <div class="intro-subtitle">
+    Survei ini bertujuan untuk memahami gambaran kesejahteraan individu pada masyarakat Indonesia melalui empat aspek penting kehidupan.
+  </div>
+
+  <div class="intro-section">
+    <h3>📚 Dasar Teori</h3>
+    <p>
+      Kuesioner ini menggunakan <strong>Indonesian Well-being Scale (IWS)</strong>
+      yang dikembangkan oleh Maulana, Khawaja, dan Obst (2019).
+      Skala ini dirancang secara khusus berdasarkan konteks budaya Indonesia
+      dan mengukur kesejahteraan melalui empat dimensi utama:
+      <strong>Spiritualitas</strong>,
+      <strong>Hubungan Sosial</strong>,
+      <strong>Kebutuhan Dasar</strong>, dan
+      <strong>Penerimaan Diri</strong>.
+    </p>
+  </div>
+
+  <div class="intro-section">
+    <h3>🎯 Tujuan Pengisian</h3>
+    <p>
+      Hasil pengisian akan digunakan untuk memperoleh gambaran tingkat
+      kesejahteraan peserta serta mendukung kegiatan penelitian dan
+      pengembangan program psikologi yang berfokus pada peningkatan kualitas hidup.
+    </p>
+  </div>
+
+  <div class="intro-section">
+    <h3>👨‍🔬 Tentang Penyelenggara</h3>
+    <p>
+      Halo, saya <strong>David</strong>, mahasiswa Fakultas Psikologi.
+      Saya menggunakan kuesioner ini sebagai bagian dari kegiatan penelitian
+      dan pengembangan alat berbasis psikologi untuk memahami kesejahteraan
+      masyarakat Indonesia. Partisipasi Anda sangat berarti dan seluruh data
+      akan dijaga kerahasiaannya serta hanya digunakan untuk tujuan akademik.
+    </p>
+  </div>
+
+  <div class="reward-box">
+    🎁 <strong>Apresiasi Partisipan</strong><br><br>
+    Sebagai bentuk apresiasi, beberapa peserta yang beruntung akan
+    mendapatkan saldo <strong>GoPay</strong> melalui undian setelah periode
+    pengumpulan data selesai. Oleh karena itu, mohon mengisi nomor GoPay
+    dengan benar pada bagian identitas peserta.
+  </div>
+
+<div class="consent-box">
+  <label>
+    <input type="checkbox" id="consent">
+    <span>
+      Saya telah membaca informasi di atas dan memahami tujuan kegiatan ini.
+      Saya bersedia berpartisipasi secara sukarela, memberikan jawaban yang jujur,
+      serta mengizinkan data saya digunakan untuk keperluan penelitian dan
+      pengembangan program psikologi dengan tetap menjaga kerahasiaan identitas saya.
+    </span>
+  </label>
+</div>
+
+</div>
+
+<div class="personal-data-card">`
       <div class="personal-data-title">Data Diri Peserta</div>
       <div class="personal-data-desc">
         Data digunakan untuk keperluan penelitian dan pemberian insentif.
@@ -704,6 +841,13 @@ function onAnswer(qNum) {
   }
 }
 function validatePersonalData() {
+
+  const consent = document.getElementById('consent');
+
+  if (!consent.checked) {
+    alert('Mohon menyetujui lembar persetujuan partisipasi terlebih dahulu.');
+    return false;
+  }
 
   const initials = document.getElementById('initials').value.trim();
   const age = document.getElementById('age').value;
