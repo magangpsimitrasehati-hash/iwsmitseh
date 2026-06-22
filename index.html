@@ -645,7 +645,7 @@ function getDimCategory(pct) {
 function buildSurvey() {
   const container = document.getElementById('surveyMain');
 
-  let html = `
+let html = `
 <div class="intro-card">
 
   <div class="intro-title">
@@ -661,8 +661,7 @@ function buildSurvey() {
     <p>
       Kuesioner ini menggunakan <strong>Indonesian Well-being Scale (IWS)</strong>
       yang dikembangkan oleh Maulana, Khawaja, dan Obst (2019).
-      Skala ini dirancang secara khusus berdasarkan konteks budaya Indonesia
-      dan mengukur kesejahteraan melalui empat dimensi utama:
+      Skala ini dirancang secara khusus berdasarkan konteks budaya Indonesia dan mengukur kesejahteraan melalui empat dimensi utama:
       <strong>Spiritualitas</strong>,
       <strong>Hubungan Sosial</strong>,
       <strong>Kebutuhan Dasar</strong>, dan
@@ -673,90 +672,103 @@ function buildSurvey() {
   <div class="intro-section">
     <h3>🎯 Tujuan Pengisian</h3>
     <p>
-      Hasil pengisian akan digunakan untuk memperoleh gambaran tingkat
-      kesejahteraan peserta serta mendukung kegiatan penelitian dan
-      pengembangan program psikologi yang berfokus pada peningkatan kualitas hidup.
+      Hasil pengisian akan digunakan untuk memperoleh gambaran tingkat kesejahteraan peserta serta mendukung kegiatan penelitian dan pengembangan program psikologi.
     </p>
   </div>
 
   <div class="intro-section">
-    <h3>👨‍🔬 Tentang Penyelenggara</h3>
+    <h3>👨‍🔬 Tentang Peneliti</h3>
     <p>
       Halo, saya <strong>David</strong>, mahasiswa Fakultas Psikologi.
-      Saya menggunakan kuesioner ini sebagai bagian dari kegiatan penelitian
-      dan pengembangan alat berbasis psikologi untuk memahami kesejahteraan
-      masyarakat Indonesia. Partisipasi Anda sangat berarti dan seluruh data
-      akan dijaga kerahasiaannya serta hanya digunakan untuk tujuan akademik.
+      Kuesioner ini digunakan sebagai bagian dari kegiatan penelitian dan pengembangan instrumen psikologi mengenai kesejahteraan masyarakat Indonesia.
+      Seluruh data akan dijaga kerahasiaannya dan hanya digunakan untuk tujuan akademik.
+    </p>
+  </div>
+
+  <div class="intro-section">
+    <h3>⏱ Estimasi Waktu Pengisian</h3>
+    <p>
+      Pengisian kuesioner membutuhkan waktu sekitar 3–5 menit.
+    </p>
+  </div>
+
+  <div class="intro-section">
+    <h3>🔒 Kerahasiaan Data</h3>
+    <p>
+      Identitas peserta tidak akan dipublikasikan. Data hanya digunakan untuk keperluan penelitian dan pengembangan ilmu psikologi.
     </p>
   </div>
 
   <div class="reward-box">
     🎁 <strong>Apresiasi Partisipan</strong><br><br>
-    Sebagai bentuk apresiasi, beberapa peserta yang beruntung akan
-    mendapatkan saldo <strong>GoPay</strong> melalui undian setelah periode
-    pengumpulan data selesai. Oleh karena itu, mohon mengisi nomor GoPay
-    dengan benar pada bagian identitas peserta.
+    Beberapa peserta yang beruntung akan memperoleh saldo GoPay melalui undian setelah periode pengumpulan data selesai.
+  
+   <p style="margin-top:10px;font-size:13px;">
+    Nomor GoPay hanya digunakan untuk keperluan pengundian insentif dan tidak akan dipublikasikan maupun dibagikan kepada pihak lain.
+  </p>
+</div>
+  
+  <div class="consent-box">
+    <label>
+      <input type="checkbox" id="consent">
+      <span>
+        Saya telah membaca informasi di atas dan bersedia mengikuti kegiatan ini secara sukarela.
+        Saya memahami bahwa data yang saya berikan akan digunakan untuk keperluan penelitian dan dijaga kerahasiaannya.
+        Saya memahami bahwa partisipasi dalam penelitian ini bersifat sukarela dan saya dapat menghentikan pengisian kapan saja tanpa konsekuensi apa pun.
+      </span>
+    </label>
   </div>
 
-<div class="consent-box">
-  <label>
-    <input type="checkbox" id="consent">
-    <span>
-      Saya telah membaca informasi di atas dan memahami tujuan kegiatan ini.
-      Saya bersedia berpartisipasi secara sukarela, memberikan jawaban yang jujur,
-      serta mengizinkan data saya digunakan untuk keperluan penelitian dan
-      pengembangan program psikologi dengan tetap menjaga kerahasiaan identitas saya.
-    </span>
-  </label>
 </div>
 
+<div class="personal-data-card">
+
+  <div class="personal-data-title">Data Diri Peserta</div>
+
+  <div class="personal-data-desc">
+    Data digunakan untuk keperluan penelitian dan pemberian insentif.
+  </div>
+
+  <div class="form-group">
+    <label>Inisial Nama</label>
+    <input type="text" id="initials" placeholder="Contoh: DR">
+  </div>
+
+  <div class="form-group">
+    <label>Umur</label>
+    <input type="number" id="age">
+  </div>
+
+  <div class="form-group">
+    <label>Jenis Kelamin</label>
+    <select id="gender">
+      <option value="">Pilih</option>
+      <option>Laki-laki</option>
+      <option>Perempuan</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Agama</label>
+    <select id="religion">
+      <option value="">Pilih</option>
+      <option>Islam</option>
+      <option>Kristen Protestan</option>
+      <option>Katolik</option>
+      <option>Hindu</option>
+      <option>Buddha</option>
+      <option>Konghucu</option>
+      <option>Lainnya</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Nomor GoPay</label>
+    <input type="tel" id="gopay" placeholder="08xxxxxxxxxx">
+  </div>
+
 </div>
-
-<div class="personal-data-card">`
-      <div class="personal-data-title">Data Diri Peserta</div>
-      <div class="personal-data-desc">
-        Data digunakan untuk keperluan penelitian dan pemberian insentif.
-      </div>
-
-      <div class="form-group">
-        <label>Inisial Nama</label>
-        <input type="text" id="initials" placeholder="Contoh: DR">
-      </div>
-
-      <div class="form-group">
-        <label>Umur</label>
-        <input type="number" id="age">
-      </div>
-
-      <div class="form-group">
-        <label>Jenis Kelamin</label>
-        <select id="gender">
-          <option value="">Pilih</option>
-          <option>Laki-laki</option>
-          <option>Perempuan</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Agama</label>
-        <select id="religion">
-          <option value="">Pilih</option>
-          <option>Islam</option>
-          <option>Kristen Protestan</option>
-          <option>Katolik</option>
-          <option>Hindu</option>
-          <option>Buddha</option>
-          <option>Konghucu</option>
-          <option>Lainnya</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Nomor GoPay</label>
-        <input type="tel" id="gopay" placeholder="08xxxxxxxxxx">
-      </div>
-    </div>
-  `;
+`;
   
 html += `
     <div class="personal-data-card">
@@ -1016,10 +1028,7 @@ fetch(
 
 function restartSurvey() {
   answered.clear();
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('survey').style.display = 'block';
-  buildSurvey();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.location.reload();
 }
 
 buildSurvey();
