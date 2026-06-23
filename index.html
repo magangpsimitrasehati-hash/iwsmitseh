@@ -408,6 +408,68 @@
     flex-shrink: 0;
   }
 
+  /* ── Modul PDF Card ── */
+  .modul-card {
+    background: linear-gradient(135deg, #1A1A2E 0%, #2D2B55 100%);
+    border-radius: var(--radius);
+    padding: 24px 24px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .modul-card-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+  }
+  .modul-card-body {
+    flex: 1;
+    min-width: 180px;
+  }
+  .modul-card-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 4px;
+  }
+  .modul-card-title {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .modul-card-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+  }
+  .btn-modul {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: #1A1A2E;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .btn-modul:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-modul:active { transform: scale(0.97); }
+  .btn-modul-icon { font-size: 15px; }
+
   .btn-restart {
     display: block;
     margin: 32px auto 0;
@@ -486,6 +548,8 @@
 
   @media (max-width: 480px) {
     .likert-desc { display: none; }
+    .modul-card { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .btn-modul { width: 100%; justify-content: center; }
   }
 </style>
 </head>
@@ -515,14 +579,6 @@
 </div>
 
 <script>
-// ── EXACT questions from the uploaded document ──
-// Order matches the original numbering 1–20
-// Dimension mapping (based on IWS Maulana 2019):
-//   Spirituality  : 1–5
-//   Social Rel.   : 6–11
-//   Basic Needs   : 12–15
-//   Acceptance    : 16–20
-
 const DIMENSIONS = [
   {
     id: 'sp',
@@ -591,7 +647,7 @@ const DIMENSIONS = [
       'Saya mampu memenuhi kebutuhan sekunder (contoh: liburan/rekreasi).'
     ],
     desc_high: 'Kebutuhan dasarmu terpenuhi dengan baik. Kamu memiliki kestabilan finansial yang memberikan rasa aman — mulai dari kebutuhan harian hingga tabungan darurat.',
-    desc_mid:  'Kebutuhan pokokmu cukup terpenuhi, namun ada beberapa area finansial — seperti tabungan darurat atau kebutuhan sekunder — yang masih perlu diperhatikan.',
+    desc_mid:  'Kebutuhan pokokmu cukup terpenuhi, namun beberapa area finansial — seperti tabungan darurat atau kebutuhan sekunder — yang masih perlu diperhatikan.',
     desc_low:  'Kamu mungkin sedang mengalami tekanan finansial yang cukup berarti. Ini bisa berdampak pada aspek kesejahteraan lainnya, dan penting untuk dicari solusinya secara bertahap.',
     resources: [
       { label: 'OJK: Literasi & Edukasi Keuangan', url: 'https://sikapiuangmu.ojk.go.id', tag: 'Finansial', icon: '💰' },
@@ -628,6 +684,9 @@ const DIMENSIONS = [
 
 const TOTAL_MAX = 100;
 
+// ── PDF Modul URL — update this to your actual hosted PDF URL ──
+const MODUL_PDF_URL = 'Modul_IWS_Wellbeing_Journal.pdf';
+
 function getCategory(pct) {
   if (pct >= 80) return { label: 'Kesejahteraan Tinggi', emoji: '🌟', desc: 'Kamu menunjukkan tingkat kesejahteraan yang sangat baik di sebagian besar dimensi kehidupanmu. Pertahankan dan terus kembangkan!' };
   if (pct >= 60) return { label: 'Kesejahteraan Cukup Baik', emoji: '😊', desc: 'Kesejahteraanmu berada di level yang baik. Ada beberapa dimensi yang bisa diperkuat untuk meningkatkan kualitas hidupmu secara keseluruhan.' };
@@ -645,100 +704,45 @@ function getDimCategory(pct) {
 function buildSurvey() {
   const container = document.getElementById('surveyMain');
 
-let html = `
+  let html = `
 <div class="intro-card">
-
-  <div class="intro-title">
-    Indonesian Well-being Scale (IWS)
-  </div>
-
-  <div class="intro-subtitle">
-    Survei ini bertujuan untuk memahami gambaran kesejahteraan individu yang disesuaikan dengan konteks masyarakat Indonesia melalui empat aspek penting kehidupan.
-  </div>
-
+  <div class="intro-title">Indonesian Well-being Scale (IWS)</div>
+  <div class="intro-subtitle">Survei ini bertujuan untuk memahami gambaran kesejahteraan individu pada masyarakat Indonesia melalui empat aspek penting kehidupan.</div>
   <div class="intro-section">
     <h3>📚 Dasar Teori</h3>
-    <p>
-      Kuesioner ini menggunakan <strong>Indonesian Well-being Scale (IWS)</strong>
-      yang dikembangkan oleh Maulana, Khawaja, dan Obst (2019).
-      Skala ini dirancang secara khusus berdasarkan konteks budaya Indonesia dan mengukur kesejahteraan melalui empat dimensi utama:
-      <strong>Spiritualitas, kedekatan diri dengan </strong>,
-      <strong>Hubungan Sosial</strong>,
-      <strong>Kebutuhan Dasar</strong>, dan
-      <strong>Penerimaan Diri</strong>.
-    </p>
+    <p>Kuesioner ini menggunakan <strong>Indonesian Well-being Scale (IWS)</strong> yang dikembangkan oleh Maulana, Khawaja, dan Obst (2019). Skala ini dirancang secara khusus berdasarkan konteks budaya Indonesia dan mengukur kesejahteraan melalui empat dimensi utama: <strong>Spiritualitas</strong>, <strong>Hubungan Sosial</strong>, <strong>Kebutuhan Dasar</strong>, dan <strong>Penerimaan Diri</strong>.</p>
   </div>
-
   <div class="intro-section">
     <h3>🎯 Tujuan Pengisian</h3>
-    <p>
-      Hasil pengisian akan digunakan untuk memperoleh gambaran tingkat kesejahteraan peserta serta mendukung kegiatan penelitian dan pengembangan program psikologi.
-    </p>
+    <p>Hasil pengisian akan digunakan untuk memperoleh gambaran tingkat kesejahteraan peserta serta mendukung kegiatan penelitian dan pengembangan program psikologi yang berfokus pada peningkatan kualitas hidup.</p>
   </div>
-
   <div class="intro-section">
-    <h3>👨‍🔬 Tentang Peneliti</h3>
-    <p>
-      Halo, saya <strong>David Ramadhany Alexandro</strong>, salah satu asisten psikolog yang bekerja di bawah supervisi <strong>Iip Fariha m.  Psi., Psikolog<strong> di Klinik Mitra Sehati yang merupakan mahasiswa Fakultas Psikologi Universitas Padjadjaran.
-      Kuesioner ini digunakan sebagai bagian dari kegiatan penelitian mengenai kesejahteraan secara umum di area sekitar Klinik Mitra Sehati.
-      Seluruh data akan dijaga kerahasiaannya dan hanya digunakan untuk tujuan akademik dan pengembangan layanan klinik.
-    </p>
+    <h3>👨‍🔬 Tentang Penyelenggara</h3>
+    <p> Halo, saya <strong>David Ramadhany Alexandro</strong>, salah satu asisten psikolog yang bekerja di bawah supervisi <strong>Iip Fariha m.  Psi., Psikolog<strong> di Klinik Mitra Sehati yang merupakan mahasiswa Fakultas Psikologi Universitas Padjadjaran. Kuesioner ini digunakan sebagai bagian dari kegiatan penelitian mengenai kesejahteraan secara umum di area sekitar Klinik Mitra Sehati. Seluruh data akan dijaga kerahasiaannya dan hanya digunakan untuk tujuan akademik dan pengembangan layanan klinik.</p>
   </div>
-
-  <div class="intro-section">
-    <h3>⏱ Estimasi Waktu Pengisian</h3>
-    <p>
-      Pengisian kuesioner membutuhkan waktu sekitar 3–5 menit.
-    </p>
-  </div>
-
-  <div class="intro-section">
-    <h3>🔒 Kerahasiaan Data</h3>
-    <p>
-      Identitas peserta tidak akan dipublikasikan. Data hanya digunakan untuk keperluan penelitian dan pengembangan klinik.
-    </p>
-  </div>
-
   <div class="reward-box">
     🎁 <strong>Apresiasi Partisipan</strong><br><br>
-    Beberapa peserta yang beruntung akan memperoleh saldo GoPay sebesar 30 ribu melalui undian setelah periode pengumpulan data selesai.
-  
-   <p style="margin-top:10px;font-size:13px;">
-    Nomor GoPay hanya digunakan untuk keperluan pengundian insentif dan tidak akan dipublikasikan maupun dibagikan kepada pihak lain. Apabila tidak berkenan maka isi saja kolom tersebut dengan angka 0.
-  </p>
-</div>
-  
+    Sebagai bentuk apresiasi, beberapa peserta yang beruntung akan mendapatkan saldo <strong>GoPay</strong> melalui undian setelah periode pengumpulan data selesai. Oleh karena itu, mohon mengisi nomor GoPay dengan benar pada bagian identitas peserta.
+  </div>
   <div class="consent-box">
     <label>
       <input type="checkbox" id="consent">
-      <span>
-        Saya telah membaca informasi di atas dan bersedia mengikuti kegiatan ini secara sukarela.
-        Saya memahami bahwa data yang saya berikan akan digunakan untuk keperluan penelitian dan dijaga kerahasiaannya.
-        Saya memahami bahwa partisipasi dalam penelitian ini bersifat sukarela dan saya dapat menghentikan pengisian kapan saja tanpa konsekuensi apa pun.
-      </span>
+      <span>Saya telah membaca informasi di atas dan memahami tujuan kegiatan ini. Saya bersedia berpartisipasi secara sukarela, memberikan jawaban yang jujur, serta mengizinkan data saya digunakan untuk keperluan penelitian dan pengembangan program psikologi dengan tetap menjaga kerahasiaan identitas saya.</span>
     </label>
   </div>
-
 </div>
 
 <div class="personal-data-card">
-
   <div class="personal-data-title">Data Diri Peserta</div>
-
-  <div class="personal-data-desc">
-    Data digunakan untuk keperluan penelitian dan pemberian insentif.
-  </div>
-
+  <div class="personal-data-desc">Data digunakan untuk keperluan penelitian dan pemberian insentif.</div>
   <div class="form-group">
     <label>Inisial Nama</label>
     <input type="text" id="initials" placeholder="Contoh: DR">
   </div>
-
   <div class="form-group">
     <label>Umur</label>
     <input type="number" id="age">
   </div>
-
   <div class="form-group">
     <label>Jenis Kelamin</label>
     <select id="gender">
@@ -747,7 +751,6 @@ let html = `
       <option>Perempuan</option>
     </select>
   </div>
-
   <div class="form-group">
     <label>Agama</label>
     <select id="religion">
@@ -761,30 +764,25 @@ let html = `
       <option>Lainnya</option>
     </select>
   </div>
-
   <div class="form-group">
     <label>Nomor GoPay</label>
     <input type="tel" id="gopay" placeholder="08xxxxxxxxxx">
   </div>
+</div>
 
+<div class="personal-data-card">
+  <div class="personal-data-title">Panduan Skala Jawaban</div>
+  <div class="personal-data-desc">Pilih berdasarkan seberapa sesuai pernyataan tersebut dengan keadaanmu, dari 1 "Sangat Tidak Setuju" (STS) hingga 5 "Sangat Setuju" (SS).</div>
+  <div style="font-size:14px; line-height:1.8;">
+    <strong>STS</strong> = Sangat Tidak Setuju<br>
+    <strong>TS</strong> = Tidak Setuju<br>
+    <strong>N</strong> = Netral<br>
+    <strong>S</strong> = Setuju<br>
+    <strong>SS</strong> = Sangat Setuju
+  </div>
 </div>
 `;
-  
-html += `
-    <div class="personal-data-card">
-      <div class="personal-data-title">Panduan Skala Jawaban</div>
-      <div class="personal-data-desc">Pilih berdasarkan seberapa sesuai pernyataan tersebut dengan keadaanmu, dari 1 "Sangat Tidak Setuju" (STS) hingga 5 "Sangat Setuju" (SS).
-       </div>
-      <div style="font-size:14px; line-height:1.8;">
-        <strong>STS</strong> = Sangat Tidak Setuju<br>
-        <strong>TS</strong> = Tidak Setuju<br>
-        <strong>N</strong> = Netral<br>
-        <strong>S</strong> = Setuju<br>
-        <strong>SS</strong> = Sangat Setuju
-      </div>
-    </div>
-    
-  `;
+
   DIMENSIONS.forEach(dim => {
     html += `
       <div class="section-header ${dim.id}">
@@ -803,19 +801,13 @@ html += `
           <div class="q-text">${q}</div>
           <div class="likert">
             ${[1,2,3,4,5].map(v => `
-                <label title="${[
-  'Sangat Tidak Setuju',
-  'Tidak Setuju',
-  'Netral',
-  'Setuju',
-  'Sangat Setuju'
-][v-1]}">
-  <input type="radio" name="q${qNum}" value="${v}" onchange="onAnswer(${qNum})">
-  <div class="likert-btn">
-    <span class="likert-score">${v}</span>
-    <span class="likert-desc">${['STS','TS','N','S','SS'][v-1]}</span>
-  </div>
-</label>
+              <label title="${['Sangat Tidak Setuju','Tidak Setuju','Netral','Setuju','Sangat Setuju'][v-1]}">
+                <input type="radio" name="q${qNum}" value="${v}" onchange="onAnswer(${qNum})">
+                <div class="likert-btn">
+                  <span class="likert-score">${v}</span>
+                  <span class="likert-desc">${['STS','TS','N','S','SS'][v-1]}</span>
+                </div>
+              </label>
             `).join('')}
           </div>
         </div>
@@ -852,28 +844,25 @@ function onAnswer(qNum) {
     note.textContent = `${answered.size} / 20 pernyataan terjawab.`;
   }
 }
+
 function validatePersonalData() {
-
   const consent = document.getElementById('consent');
-
   if (!consent.checked) {
     alert('Mohon menyetujui lembar persetujuan partisipasi terlebih dahulu.');
     return false;
   }
-
   const initials = document.getElementById('initials').value.trim();
   const age = document.getElementById('age').value;
   const gender = document.getElementById('gender').value;
   const religion = document.getElementById('religion').value;
   const gopay = document.getElementById('gopay').value.trim();
-
   if (!initials || !age || !gender || !religion || !gopay) {
     alert('Mohon lengkapi seluruh data diri terlebih dahulu.');
     return false;
   }
-
   return true;
 }
+
 function getScores() {
   const scores = {};
   DIMENSIONS.forEach(dim => {
@@ -886,45 +875,41 @@ function getScores() {
   });
   return scores;
 }
-function showResults() {
 
-  if (!validatePersonalData()) {
-    return;
-  }
+function showResults() {
+  if (!validatePersonalData()) return;
+
   const scores = getScores();
   const totalScore = Object.values(scores).reduce((a,b) => a+b, 0);
   const totalPct = Math.round((totalScore / TOTAL_MAX) * 100);
   const cat = getCategory(totalPct);
+
   const participantData = {
-  initials: document.getElementById('initials').value,
-  age: document.getElementById('age').value,
-  gender: document.getElementById('gender').value,
-  religion: document.getElementById('religion').value,
-  gopay: document.getElementById('gopay').value
-};
+    initials: document.getElementById('initials').value,
+    age: document.getElementById('age').value,
+    gender: document.getElementById('gender').value,
+    religion: document.getElementById('religion').value,
+    gopay: document.getElementById('gopay').value
+  };
 
-const params = new URLSearchParams({
-  initials: participantData.initials,
-  age: participantData.age,
-  gender: participantData.gender,
-  religion: participantData.religion,
-  gopay: participantData.gopay,
-  totalScore: totalScore,
-  totalPct: totalPct,
-  spirituality: scores.sp,
-  socialRelation: scores.sr,
-  basicNeeds: scores.bn,
-  selfAcceptance: scores.ac
-});
+  const params = new URLSearchParams({
+    initials: participantData.initials,
+    age: participantData.age,
+    gender: participantData.gender,
+    religion: participantData.religion,
+    gopay: participantData.gopay,
+    totalScore: totalScore,
+    totalPct: totalPct,
+    spirituality: scores.sp,
+    socialRelation: scores.sr,
+    basicNeeds: scores.bn,
+    selfAcceptance: scores.ac
+  });
 
-fetch(
-  "https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec?" +
-  params.toString(),
-  {
-    method: "GET",
-    mode: "no-cors"
-  }
-);
+  fetch(
+    "https://script.google.com/macros/s/AKfycbzH_4Sz0K2xpkpmfdZK8EvNY9N5G_AuTQW-keaxf_gyy57zNEoBS5uYS1yGVex6gIOS/exec?" + params.toString(),
+    { method: "GET", mode: "no-cors" }
+  );
 
   document.getElementById('survey').style.display = 'none';
   document.getElementById('results').style.display = 'block';
@@ -972,6 +957,21 @@ fetch(
     `;
   });
   html += `</div>`;
+
+  // ── Modul PDF Card ──
+  html += `
+    <div class="modul-card">
+      <div class="modul-card-icon">📓</div>
+      <div class="modul-card-body">
+        <div class="modul-card-eyebrow">Lanjutkan Perjalananmu</div>
+        <div class="modul-card-title">Strength-Based Wellbeing Journal</div>
+        <div class="modul-card-desc">Modul intervensi psikologi berbasis IWS — 4 sesi, 30–45 menit per sesi. Gratis untuk diunduh.</div>
+      </div>
+      <a class="btn-modul" href="${MODUL_PDF_URL}" target="_blank" download="Modul_IWS_Wellbeing_Journal.pdf">
+        <span class="btn-modul-icon">⬇️</span> Unduh Modul PDF
+      </a>
+    </div>
+  `;
 
   const sortedDims = [...DIMENSIONS].sort((a,b) => {
     return (scores[a.id]/a.maxScore) - (scores[b.id]/b.maxScore);
@@ -1028,7 +1028,10 @@ fetch(
 
 function restartSurvey() {
   answered.clear();
-  window.location.reload();
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('survey').style.display = 'block';
+  buildSurvey();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 buildSurvey();
